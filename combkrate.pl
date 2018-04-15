@@ -18,8 +18,16 @@ if ($league eq '') {
 }
 
 my $both_comb_query = "select b.uid, b.name, b.league, b.age, b.pa, (((s.both_adjusted_woba/2) + s.both_adjusted_isop) * (1 - s.krate) * (1 - s.krate)) as comb, s.isop, s.woba, s.krate from batters b, stats s where $leaguestring b.uid=s.uid and b.pa > $pa order by comb desc limit $limit";
-
 my $both_comb_sth = $dbh->prepare($both_comb_query);
+
+my $lastupdatequery = "select lastupdate from battingupdate";
+my $lastupdatesth = $dbh->prepare($lastupdatequery);
+
+my $date = "";
+$lastupdatesth->execute();
+while (@data = $lastupdatesth->fetchrow_array()) {
+    $date = $data[0];
+}
 
 header();
 print "<table class=\"pure-table pure-table-horizontal\"><thead>\n";
@@ -43,6 +51,7 @@ print <<HTML;
   </head>
 
   <body>
+      <font size="1"><b>Generated:</b> $date</font>
 HTML
 }
 

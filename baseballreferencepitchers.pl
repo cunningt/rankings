@@ -25,6 +25,14 @@ my $birthsth = $dbh->prepare($birthdatequery);
 my $birthinsertquery = "insert into birthdate(nameurl, name, birthdate) VALUES (?, ?, ?)";
 my $birthinsertsth = $dbh->prepare($birthinsertquery);
 
+my $date = `date`;
+my $deletequery = "delete from pitchingupdate";
+my $updatequery = "insert into pitchingupdate(lastupdate) VALUES(?)";
+my $deletesth = $dbh->prepare($deletequery);
+my $updatesth = $dbh->prepare($updatequery);
+$deletesth->execute();
+$updatesth->execute($date);
+
 my $urltemplate = "http://www.baseball-reference.com/minors/leader.cgi?type=pitch&id=%arg%&sort_by=so";
 
 $leaguesth->execute($year);

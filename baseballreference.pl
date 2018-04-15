@@ -23,6 +23,14 @@ my $birthsth = $dbh->prepare($birthdatequery);
 my $birthinsertquery = "insert into birthdate(nameurl, name, birthdate) VALUES (?, ?, ?)";
 my $birthinsertsth = $dbh->prepare($birthinsertquery);
 
+my $date = `date`;
+my $deletequery = "delete from battingupdate";
+my $updatequery = "insert into battingupdate(lastupdate) VALUES(?)";
+my $deletesth = $dbh->prepare($deletequery);
+my $updatesth = $dbh->prepare($updatequery);
+$deletesth->execute();
+$updatesth->execute($date);
+
 my $urltemplate = "http://www.baseball-reference.com/minors/leader.cgi?type=bat&id=%arg%&sort_by=slugging_perc";
 my $year = defined($ARGV[0]) ? shift(@ARGV) : "2018";
 

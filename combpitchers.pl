@@ -13,6 +13,16 @@ my $adjustedkminusbb = "select p.uid, p.name, p.league, p.age, p.ip, ps.adjusted
 
 my $adjustedkminusbbsth = $dbh->prepare($adjustedkminusbb);
 
+my $lastupdatequery = "select lastupdate from pitchingupdate";
+my $lastupdatesth = $dbh->prepare($lastupdatequery);
+
+my $date = "";
+$lastupdatesth->execute();
+while (@data = $lastupdatesth->fetchrow_array()) {
+    $date = $data[0];
+}
+
+
 header();
 print "<table class=\"pure-table pure-table-horizontal\"><thead>\n";
 print "<tr><th>Name</th><th>League</th><th>Age</th><th>IP</th><th>BB</th><th>K</th><th>FIP</th><th>KMinusBB</th></tr></thead>\n";
@@ -34,6 +44,7 @@ print <<HTML;
   </head>
 
   <body>
+      <font size="1"><b>Generated:</b> $date</font>
 HTML
 }
 
