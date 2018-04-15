@@ -7,6 +7,11 @@
 *.pm.tdy
 *.bs
 
+scp.sh
+
+dbi.conf
+*.html
+
 # Devel::Cover
 cover_db/
 
