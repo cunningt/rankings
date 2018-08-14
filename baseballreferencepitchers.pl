@@ -42,6 +42,7 @@ while (@row = $leaguesth->fetchrow_array()) {
    $url =~ s|%arg%|$leaguehash|;
 
    print "$league ... fetching data ...\n";
+   print "====\n$url\n====\n";
    insertBatters($url);
 }
 

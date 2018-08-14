@@ -7,7 +7,7 @@ my $curdir = `pwd`;
 chomp $curdir;
 my $dbh = DBI->connect("DBI:mysql:mysql_read_default_file=$curdir/dbi.conf;mysql_read_default_group=minors", undef, undef, {});
 
-$pa = 75;
+$pa = 30;
 $limit = 50;
 $league = $ARGV[0];
 

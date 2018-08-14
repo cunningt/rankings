@@ -11,20 +11,19 @@ my $curdir = `pwd`;
 chomp $curdir;
 my $dbh = DBI->connect("DBI:mysql:mysql_read_default_file=$curdir/dbi.conf;mysql_read_default_group=minors", undef, undef, {});
 
-my $leaguesquery = "select leagueid, league, level, year from fgleagues where year = ?";
+my $leaguesquery = "select leagueid, league, level, year from fgleaguelist where year = ?";
 my $leaguesth = $dbh->prepare($leaguesquery);
 
-my $query = "insert into fgbattedball(nameurl, name, age, team, league, level, ldpercentage, gbpercentage, fbpercentage, iffbpercentage, pullpercentage, "
- . "centpercentage, oppopercentage, swstr, balls, strikes, pitches) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+my $query = "insert into fgbatters(nameurl, name, age, team, league, level, games, pa, ab, r, h, doubles, triples, hr, rbi, bb, so) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 my $isth = $dbh->prepare($query);
 
-my $birthdatequery = "select birthdate from birthdate where nameurl = ?";
+my $birthdatequery = "select birthdate from fgbirthdate where nameurl = ?";
 my $birthsth = $dbh->prepare($birthdatequery);
 
-my $birthinsertquery = "insert into birthdate(nameurl, name, birthdate) VALUES (?, ?, ?)";
+my $birthinsertquery = "insert into fgbirthdate(nameurl, name, birthdate) VALUES (?, ?, ?)";
 my $birthinsertsth = $dbh->prepare($birthinsertquery);
 
-my $urltemplate = "https://www.fangraphs.com/minorleaders.aspx?pos=all&stats=bat&lg=%arg%&qual=0&type=2&season=2018&team=0&players=0&page=1_700";
+my $urltemplate = "https://www.fangraphs.com/minorleaders.aspx?pos=all&stats=bat&lg=%arg%&qual=0&type=0&season=2018&team=0&players=0&page=1_700";
 my $year = defined($ARGV[0]) ? shift(@ARGV) : "2018";
 
 $leaguesth->execute($year);
@@ -107,16 +106,7 @@ sub insertBatters {
 
 		my $team = $tree->cell($rowcount,1)->as_text;
                 $team =~ s| \([^)]+\)||;
-
-        (my $ldpercentage = $tree->cell($rowcount,6)->as_text) =~ s| %||;
-        (my $gbpercentage = $tree->cell($rowcount,7)->as_text) =~ s| %||;
-        (my $fbpercentage = $tree->cell($rowcount,8)->as_text) =~ s| %||;
-        (my $iffbpercentage = $tree->cell($rowcount,9)->as_text) =~ s| %||;
-        (my $pullpercentage = $tree->cell($rowcount,11)->as_text) =~ s| %||;
-        (my $centpercentage = $tree->cell($rowcount,12)->as_text) =~ s| %||;
-        (my $oppopercentage = $tree->cell($rowcount,13)->as_text) =~ s| %||;
-        (my $swstr = $tree->cell($rowcount,14)->as_text) =~ s| %||;
-
+	
 		my $player = {
 			name=>$tree->cell($rowcount,0)->as_text,
             uid=>$uid,
@@ -124,43 +114,39 @@ sub insertBatters {
 			team=>$team,
             league=>$lg,
 			level=>$level,
-            $ldpercentage,
-            $gbpercentage,
-            $fbpercentage,
-            $iffbpercentage,
-            $pullpercentage,
-            $centpercentage,
-            $oppopercentage,
-            $swstr,
-            balls=>$tree->cell($rowcount,15)->as_text,
-            strikes=>$tree->cell($rowcount,16)->as_text,
-            pitches=>$tree->cell($rowcount,17)->as_text
-        };
-        
-        $isth->execute($uid,
-            $tree->cell($rowcount,0)->as_text,
-            $age,
-            $team,
-            $lg,
-            $level,
-            $ldpercentage,
-            $gbpercentage,
-            $fbpercentage,
-            $iffbpercentage,
-            $pullpercentage,
-            $centpercentage,
-            $oppopercentage,
-            $swstr,
-            $tree->cell($rowcount,15)->as_text,
-            $tree->cell($rowcount,16)->as_text,
-            $tree->cell($rowcount,17)->as_text);
-            
-            
-       $rowcount++;            
-        
+			games=>$tree->cell($rowcount,3)->as_text,
+			pa=>$tree->cell($rowcount,5)->as_text,
+			ab=>$tree->cell($rowcount,4)->as_text,
+			r=>$tree->cell($rowcount,11)->as_text,
+			h=>$tree->cell($rowcount,6)->as_text,
+            doubles=>$tree->cell($rowcount,8)->as_text,
+			triples=>$tree->cell($rowcount,9)->as_text,
+			hr=>$tree->cell($rowcount,10)->as_text,
+			rbi=>$tree->cell($rowcount,12)->as_text,
+			bb=>$tree->cell($rowcount,13)->as_text,
+			k=>$tree->cell($rowcount,15)->as_text
+			};
 
             print "PLAYER " . Dumper(\$player) . "\n";
-
+            
+            $isth->execute($uid,
+                $tree->cell($rowcount,0)->as_text,
+                $age,
+                $team,
+                $lg,
+                $level,
+                $tree->cell($rowcount,3)->as_text,
+                $tree->cell($rowcount,5)->as_text,
+                $tree->cell($rowcount,4)->as_text,
+                $tree->cell($rowcount,11)->as_text,
+                $tree->cell($rowcount,6)->as_text,
+                $tree->cell($rowcount,8)->as_text,
+                $tree->cell($rowcount,9)->as_text,
+                $tree->cell($rowcount,10)->as_text,
+                $tree->cell($rowcount,12)->as_text,
+                $tree->cell($rowcount,13)->as_text,
+                $tree->cell($rowcount,15)->as_text);
+                
 	   }
 	} 
 }

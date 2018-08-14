@@ -47,9 +47,15 @@ while (@data = $playersth->fetchrow_array()) {
     my $hr = $data[12];
  
     my $agediff = $avgagehash{$league} - $age;
+    next if (! exists($stddevhash{$league}) || ($stddevhash{$league} == 0));
     my $stddiff = $agediff / (2 * $stddevhash{$league});
 
-    if (($g > 0) && ($ip > 0)) {
+    
+    if ($bf == 0) {
+       $bf = $ip + $ip + $ip + h + bb + $hbp;   
+    }
+
+    if (($g > 0) && ($ip > 0) && ($bf > 0)) {
 	
         my $bfg = $bf / $g;
         my $kminusbb = ($so / $bf)  - ($bb / $bf);

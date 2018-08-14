@@ -1,4 +1,5 @@
 CREATE TABLE `fgbatters` (
+  uid int(11) NOT NULL AUTO_INCREMENT,
   `nameurl` varchar(26) NOT NULL, 
   `name` varchar(192) NOT NULL, 
   `age` float NOT NULL, 
@@ -16,7 +17,8 @@ CREATE TABLE `fgbatters` (
   `rbi` smallint(6) NOT NULL, 
   `bb` smallint(6) NOT NULL, 
   `so` smallint(6) NOT NULL, 
-PRIMARY KEY `PRIMARY` (`nameurl`)
+  constraint fgbatters_unique UNIQUE(nameurl,league),
+PRIMARY KEY `PRIMARY` (`uid`)
 ) ENGINE=InnoDB;
 
 #...done.

@@ -8,7 +8,7 @@ chomp $curdir;
 my $dbh = DBI->connect("DBI:mysql:mysql_read_default_file=$curdir/dbi.conf;mysql_read_default_group=minors", undef, undef, {});
 
 $pa = 50;
-$limit = 200;
+$limit = 50;
 $league = $ARGV[0];
 
 if ($league eq '') {
@@ -17,7 +17,7 @@ if ($league eq '') {
     $leaguestring = "b.level = '$league' and ";
 }
 
-my $both_comb_query = "select b.uid, b.name, b.league, b.age, b.pa, (((s.both_adjusted_woba/2) + s.both_adjusted_isop) * (1 - s.krate) * (1 - s.krate)) as comb, s.isop, s.woba, s.krate from batters b, stats s where $leaguestring b.uid=s.uid and b.pa > $pa order by comb desc limit $limit";
+my $both_comb_query = "select b.nameurl, b.name, b.league, b.age, b.pa, s.xiso as comb, s.isop, s.xiso, s.krate from fgbatters b, fgstats s where $leaguestring b.nameurl=s.nameurl and b.pa > $pa order by comb desc limit $limit";
 my $both_comb_sth = $dbh->prepare($both_comb_query);
 
 my $lastupdatequery = "select lastupdate from battingupdate";
@@ -31,13 +31,10 @@ while (@data = $lastupdatesth->fetchrow_array()) {
 
 header();
 print "<table class=\"pure-table pure-table-horizontal\"><thead>\n";
-print "<tr><th>Name</th><th>League</th><th>Age</th><th>PA</th><th>ISO</th><th>wOBA</th><th>K%</th><th>COMB</th></tr></thead>\n";
+print "<tr><th>Name</th><th>League</th><th>Age</th><th>PA</th><th>ISO</th><th>xISO</th><th>K%</th><th>COMB</th></tr></thead>\n";
 $both_comb_sth->execute();
-
-$counter = 1;
 while (@data = $both_comb_sth->fetchrow_array()) {
-    print "<tr><td>$counter. $data[1]</td><td>$data[2]</td><td>$data[3]</td><td>$data[4]</td><td>$data[6]</td><td>$data[7]</td><td>$data[8]</td><td>$data[5]</td></tr>\n";
-    $counter++;
+    print "<tr><td>$data[1]</td><td>$data[2]</td><td>$data[3]</td><td>$data[4]</td><td>$data[6]</td><td>$data[7]</td><td>$data[8]</td><td>$data[5]</td></tr>\n";
 }
 print "</table>\n";
 footer();

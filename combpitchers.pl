@@ -7,7 +7,7 @@ my $curdir = `pwd`;
 chomp $curdir;
 my $dbh = DBI->connect("DBI:mysql:mysql_read_default_file=$curdir/dbi.conf;mysql_read_default_group=minors", undef, undef, {});
 
-$ip = 4;
+$ip = 40;
 
 my $adjustedkminusbb = "select p.uid, p.name, p.league, p.age, p.ip, ps.adjustedkminusbb, p.bb, p.so, ps.fip from pitchers p, pitcherstats ps where p.age < 26 and p.uid=ps.uid and p.ip > $ip order by ps.adjustedkminusbb desc limit 25";
 

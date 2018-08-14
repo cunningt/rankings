@@ -27,10 +27,14 @@ system("./averageage.pl");
 system("./averageleague.pl");
 system("./stats.pl");
 system("./combkrate.pl > prospects.html");
+system("./prospectpage.pl > prospectpage.html");
+system("./prospectpagekrate.pl > prospectpagekrate.html");
+
 
 system("./baseballreferencepitchers.pl");
 system("./pitcheraverageage.pl");
 system("./pitcherstats.pl");
 system("./combpitchers.pl > pitchers.html");
+system("./pitcherpage.pl > pitcherpage.html");
 
 exit 0;
